@@ -18,6 +18,9 @@ import Logo from '~/components/Logo.vue'
 export default {
   components: {
     Logo
+  },
+  mounted: function () {
+    this.$store.dispatch('message/add')
   }
 }
 </script>
