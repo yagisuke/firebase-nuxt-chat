@@ -12,5 +12,7 @@ if (!firebase.apps.length) {
     }
   )
 }
-
+const db = firebase.firestore()
+db.settings({ timestampsInSnapshots: true })
+export const messageCollection = db.collection('messages')
 export default firebase
