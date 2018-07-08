@@ -1,4 +1,5 @@
-const pkg = require('./package')
+const webpack = require('webpack')
+require('dotenv').config()
 
 module.exports = {
   mode: 'universal',
@@ -7,16 +8,11 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: pkg.name,
+    title: 'firebase-nuxt-chat',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: pkg.description }
-    ],
-    script: [
-      { src: 'https://www.gstatic.com/firebasejs/5.2.0/firebase-app.js' },
-      { src: 'https://www.gstatic.com/firebasejs/5.2.0/firebase-firestore.js' },
-      { src: '/js/firebase.config.js' }
+      { hid: 'description', name: 'description', content: 'firebase nuxt chat' }
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
@@ -63,6 +59,9 @@ module.exports = {
           exclude: /(node_modules)/
         })
       }
+      config.plugins.push(
+        new webpack.EnvironmentPlugin([ 'APIKEY', 'AUTHDOMAIN', 'DATABASEURL', 'PROJECTID', 'STORAGEBUCKET', 'MESSAGINGSENDERID' ])
+      )
     }
   }
 }
