@@ -30,7 +30,7 @@ export default {
     }
   },
   created() {
-    this.$store.dispatch('messages/init')
+    this.$store.dispatch('messages/set')
       .then(() => {
         this.messages = this.$store.state.messages.items
       })
