@@ -30,6 +30,7 @@ export default {
   data() {
     return {
       notification: '',
+      messages: [],
       input: {
         message: ''
       },
@@ -38,6 +39,10 @@ export default {
   },
   mounted() {
     this.$store.dispatch('messages/listen')
+      .then(() => {
+        this.messages = this.$store.state.messages.items
+      })
+
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.login = true
@@ -45,11 +50,6 @@ export default {
         this.login = false
       }
     })
-  },
-  computed: {
-    messages() {
-      return this.$store.state.messages.items
-    }
   },
   methods: {
     onSubmit() {
