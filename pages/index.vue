@@ -22,18 +22,19 @@
 export default {
   data() {
     return {
-      messages: [],
       notification: '',
       input: {
         message: ''
       }
     }
   },
+  computed: {
+    messages() {
+      return this.$store.state.messages.items
+    }
+  },
   created() {
-    this.$store.dispatch('messages/set')
-      .then(() => {
-        this.messages = this.$store.state.messages.items
-      })
+    this.$store.dispatch('messages/listen')
   },
   methods: {
     onSubmit() {
