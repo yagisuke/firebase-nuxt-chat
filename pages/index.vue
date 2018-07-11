@@ -29,7 +29,6 @@ const auth = firebase.auth()
 export default {
   data() {
     return {
-      messages: [],
       notification: '',
       input: {
         message: ''
@@ -38,11 +37,7 @@ export default {
     }
   },
   mounted() {
-    this.$store.dispatch('messages/set')
-      .then(() => {
-        this.messages = this.$store.state.messages.items
-      })
-    
+    this.$store.dispatch('messages/listen')
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.login = true
@@ -50,6 +45,11 @@ export default {
         this.login = false
       }
     })
+  },
+  computed: {
+    messages() {
+      return this.$store.state.messages.items
+    }
   },
   methods: {
     onSubmit() {

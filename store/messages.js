@@ -5,9 +5,6 @@ export const state = () => ({
 })
 
 export const mutations = {
-  set(state, messages) {
-    state.items = messages
-  },
   add(state, message) {
     state.items.push(message)
   }
@@ -16,23 +13,19 @@ export const mutations = {
 export const getters = {}
 
 export const actions = {
-  async set(context) {
-    return await CollectionRef.orderBy('createdAt').get()
-      .then((snapshot) => {
-        let messages = []
-        snapshot.forEach((doc) => {
-          messages.push(doc.data().message)
-        })
-        context.commit('set', messages)
+  listen(context) {
+    return CollectionRef.orderBy('createdAt').onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+        if (change.type === 'added') {
+          context.commit('add', change.doc.data().message)
+        }
       })
+    })
   },
   async add(context, { message }) {
     return await CollectionRef.add({
         message,
         createdAt: firebase.firestore.FieldValue.serverTimestamp()
       })
-      .then(() => {
-        context.commit('add', message)
-      })
-  },
+  }
 }
