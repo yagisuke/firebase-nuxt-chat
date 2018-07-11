@@ -2,12 +2,16 @@
   <section class="container">
     <div>
       <h1 class="title">Firebase Nuxt Chat!</h1>
-      <h2 class="sub-title">This is FORM area!!</h2>
-      <p v-if="notification">{{ notification }}</p>
-      <form @submit.prevent="onSubmit">
-        <div><textarea v-model="input.message" cols='30' rows='10' /></div>
-        <button type="submit" :disabled="input.message.length <= 0">Submit</button>
-      </form>
+      <button v-if="!login" @click.prevent="doLogin">Login</button>
+      <button v-if="login" @click.prevent="doLogout">Logout</button>
+      <div v-if="login">
+        <h2 class="sub-title">This is FORM area!!</h2>
+        <p v-if="notification">{{ notification }}</p>
+        <form @submit.prevent="onSubmit">
+          <div><textarea v-model="input.message" cols='30' rows='10' /></div>
+          <button type="submit" :disabled="input.message.length <= 0">Submit</button>
+        </form>
+      </div>
       <h2 class="sub-title">This is posted messages!!</h2>
       <ul>
         <li v-if="messages.length" v-for="(message, index) in messages" :key="index">
@@ -19,6 +23,9 @@
 </template>
 
 <script>
+import firebase from '~/plugins/firebase'
+const auth = firebase.auth()
+
 export default {
   data() {
     return {
@@ -26,14 +33,23 @@ export default {
       notification: '',
       input: {
         message: ''
-      }
+      },
+      login: false
     }
   },
-  created() {
+  mounted() {
     this.$store.dispatch('messages/set')
       .then(() => {
         this.messages = this.$store.state.messages.items
       })
+    
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.login = true
+      } else {
+        this.login = false
+      }
+    })
   },
   methods: {
     onSubmit() {
@@ -50,6 +66,12 @@ export default {
           this.notification = ''
         }, 1000)
       })
+    },
+    doLogin() {
+      auth.signInAnonymously()
+    },
+    doLogout() {
+      auth.signOut()
     }
   }
 }
