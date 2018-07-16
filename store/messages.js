@@ -24,7 +24,7 @@ export const actions = {
           context.commit('add', { message, uid })
         }
       })
-    })
+    }, () => {})
   },
   async add(context, { message, uid }) {
     return await CollectionRef.add({
