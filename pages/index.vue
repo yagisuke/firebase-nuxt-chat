@@ -2,9 +2,9 @@
   <section class="container">
     <div>
       <h1 class="title">Firebase Nuxt Chat!</h1>
-      <button v-if="!login" @click.prevent="doLogin">Login</button>
-      <button v-if="login" @click.prevent="doLogout">Logout</button>
-      <div v-if="login">
+      <button v-if="!user.login" @click.prevent="doLogin">Login</button>
+      <button v-if="user.login" @click.prevent="doLogout">Logout</button>
+      <div v-if="user.login">
         <h2 class="sub-title">This is FORM area!!</h2>
         <p v-if="notification">{{ notification }}</p>
         <form @submit.prevent="onSubmit">
@@ -14,8 +14,8 @@
       </div>
       <h2 class="sub-title">This is posted messages!!</h2>
       <ul>
-        <li v-if="messages.length" v-for="(message, index) in messages" :key="index">
-          {{ message }}
+        <li v-if="messages.length" v-for="(item, index) in messages" :key="index">
+          {{ item.uid }}: {{ item.message }}
         </li>
       </ul>
     </div>
@@ -34,7 +34,10 @@ export default {
       input: {
         message: ''
       },
-      login: false
+      user: {
+        uid: 'nobody',
+        login: false
+      }
     }
   },
   mounted() {
@@ -44,16 +47,16 @@ export default {
       })
 
     auth.onAuthStateChanged((user) => {
-      if (user) {
-        this.login = true
-      } else {
-        this.login = false
-      }
+      this.user.login = user ? true : false
+      this.user.uid = user ? user.uid : 'nobody'
     })
   },
   methods: {
     onSubmit() {
-      this.$store.dispatch('messages/add', { message: this.input.message })
+      this.$store.dispatch('messages/add', {
+        message: this.input.message,
+        uid: this.user.uid
+      })
       .then(() => {
         this.notification = '投稿が完了しました.'
         this.input.message = ''
